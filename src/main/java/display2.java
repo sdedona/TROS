@@ -6,12 +6,15 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import javax.swing.JLabel;
 import java.awt.Font;
+import java.awt.TextField;
+
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.util.Vector;
@@ -31,6 +34,18 @@ public class display2 extends JFrame {
 	/**
 	 * Create the frame.
 	 */
+
+
+	
+	public String emailListMkr(List<List<Object>> ls, int x) {
+        String lsOf = "";
+        for (int i=1; i<ls.size();i++) {
+            lsOf = lsOf+(String)ls.get(i).get(x)+";";
+        }
+        System.out.println(lsOf);
+        return(lsOf);
+    }
+
 	public display2() throws IOException, GeneralSecurityException{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1080, 720);
@@ -82,8 +97,6 @@ public class display2 extends JFrame {
 		  addDisp.setLocationRelativeTo(null);
 		  addDisp.setSize(800, 500);
 		  addDisp.setLayout(null);
-		  
-		  
 		 
 		
 		JButton btnAddMember = new JButton("Add Member");
@@ -96,19 +109,31 @@ public class display2 extends JFrame {
 			
 				}
 		});
+	
 		btnAddMember.setBounds(349, 312, 131, 25);
 		contentPane.add(btnAddMember);
 
-		JFrame JChange = new JFrame("Change");
-		JChange.setSize(800, 500);
-		JButton btnChange = new JButton("Change");
-		btnChange.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				JChange.setVisible(true);
-			}
+		//Change function
+		JFrame change_frame = new JFrame("Change");
+		  addDisp.setLocationRelativeTo(null);
+		  addDisp.setSize(800, 500);
+		  addDisp.setLayout(null);
+		 
+		
+		JButton change = new JButton("Change");
+
+		change.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0)  {
+			
+					//Change open2 = new Change();
+					//open2.setVisible(true);
+			
+				}
 		});
-		btnChange.setBounds(489, 312, 131, 25);
-		contentPane.add(btnChange);
+		//open2.mo
+		//SheetsQuickstart.modifycell(Change.test());
+		change.setBounds(489, 312, 131, 25);
+		contentPane.add(change);
 
 		JButton btnViewRoster = new JButton("View Roster");
 		btnViewRoster.addActionListener(new ActionListener() {
@@ -117,6 +142,8 @@ public class display2 extends JFrame {
 				
 			}
 		});
+
+		
 		btnViewRoster.setBounds(475, 395, 131, 25);
 		contentPane.add(btnViewRoster);
 
@@ -124,9 +151,19 @@ public class display2 extends JFrame {
 		btnGenerateEmailList.setBounds(632, 312, 166, 25);
 		contentPane.add(btnGenerateEmailList);
 		
-		JButton btnEditMember = new JButton("Edit Member");
-		btnEditMember.setBounds(225, 312, 112, 25);
-		contentPane.add(btnEditMember);
+		//JButton btnEditMember = new JButton("Edit Member");
+		//btnEditMember.setBounds(225, 312, 112, 25);
+		//contentPane.add(btnEditMember);
+		List<List<Object>> a = SheetsQuickstart.getVals();
+		btnGenerateEmailList.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				emailListMkr(a, 2);
+
+	}
+});	
+
+
 		
 	}
+
 }

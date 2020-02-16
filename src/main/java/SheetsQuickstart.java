@@ -146,6 +146,78 @@ public class SheetsQuickstart {
         return info;
     }
 
+    public static void setVals(String name, String header, String newVal) throws IOException, GeneralSecurityException{
+        sheetsServices = getSheetsServices();
+        ValueRange body = new ValueRange()
+            .setValues(Arrays.asList(
+                Arrays.asList("Update")
+            ));
+        UpdateValuesResponse result = sheetsServices.spreadsheets().values()
+            .update(spreadsheetId,"A2", body)
+            .setValueInputOption("RAW")
+            .execute();
+    }
+
+    public static void modifycell(String [] a) throws IOException, GeneralSecurityException {
+        //[name.col,change]
+
+        //get name row numer
+        int row=getNumName(a[0]);
+
+        //idk what this is
+        sheetsServices = getSheetsServices();
+
+        //get the list of all the ind
+        List<List<Object>> all = getVals();
+
+        //List of the data of that specif person
+        //List<Object> temp= SheetsQuickstart.search(name);
+        //Print the row,, push the row onto the GUI
+
+
+        ValueRange body = new ValueRange().setValues(Arrays.asList(Arrays.asList(a[2])));
+        //use get range for the Ex."A2"
+        UpdateValuesResponse result = sheetsServices.spreadsheets().values().update(spreadsheetId,getRange(a[1],row), body).setValueInputOption("RAW").execute();
+
+    }
+    public static String getRange(String col, int row) {
+        String a="";
+         switch (col) {
+             case "0":
+                 a="A";
+             case "1":
+                 a="B";
+             case "2":
+                 a="C";
+             case "3":
+                 a="D";
+             case "4":
+                 a="E";
+             case "5":
+                 a="F";
+             case "6":
+                 a="G";
+             case "7":
+                 a="H";
+             case "8":
+                 a="I";
+             case "9":
+                 a="J";
+         }
+         String b=Integer.toString(row);
+         return(a+b);
+    }
+    public static int getNumName(String name)throws IOException, GeneralSecurityException{
+         int index=0;
+            List<List<Object>> all = getVals();
+            for(int i=1; i<all.size();i++) {
+                if(((String)all.get(i).get(0)).equals(name)) {
+                    index=i;
+                }
+            }
+            return(index);
+        }
+
     public static List<List<Object>> getVals() throws IOException, GeneralSecurityException{
     	// Build a new authorized API client service.
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
@@ -197,9 +269,10 @@ public class SheetsQuickstart {
      * https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
      */
     public static void main(String[] args) throws IOException, GeneralSecurityException {
-		/*EventQueue.invokeLater(new Runnable() {
+		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+                    setVals("Sal", "A!", "HEllo");
 					display2 frame = new display2();
 					frame.setTitle("TROS");
 					frame.setVisible(true);
@@ -207,17 +280,8 @@ public class SheetsQuickstart {
 					e.printStackTrace();
 				}
 			}
-        });*/
-        // The ID of the spreadsheet to update.
-       sheetsServices = getSheetsServices();
-        ValueRange body = new ValueRange()
-            .setValues(Arrays.asList(
-                Arrays.asList("updated")
-            ));
-        UpdateValuesResponse result = sheetsServices.spreadsheets().values()
-            .update(spreadsheetId,"A2", body)
-            .setValueInputOption("RAW")
-            .execute();
+        });
+       
 	}
         
 } 
