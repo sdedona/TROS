@@ -11,6 +11,20 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.ValueRange;
+import com.google.api.services.sheets.v4.model.UpdateValuesResponse;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.services.sheets.v4.model.CopySheetToAnotherSpreadsheetRequest;
+import com.google.api.services.sheets.v4.model.SheetProperties;
+import com.google.api.services.sheets.v4.model.Spreadsheet;
+import com.google.api.client.http.HttpTransport;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+
+
+
+
+import java.awt.EventQueue;
+
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -21,25 +35,22 @@ import java.util.Collections;
 import java.util.List;
 import java.util.*;
 
+
+
 public class SheetsQuickstart {
     private static final String APPLICATION_NAME = "Google Sheets API Java Quickstart";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
-
+    private static Sheets sheetsServices;
+    private static String spreadsheetId = "1JBX3AtbtB0oarMO-7UdZByhrxyfM_TC4ZxYEe-591gM";
     /**
      * Global instance of the scopes required by this quickstart.
      * If modifying these scopes, delete your previously saved tokens/ folder.
      */
-    private static final List<String> SCOPES = Collections.singletonList(SheetsScopes.SPREADSHEETS_READONLY);
+    private static final List<String> SCOPES = Collections.singletonList("https://www.googleapis.com/auth/spreadsheets");
     private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
 
-    /**
-     * Creates an authorized Credential object.
-     * @param HTTP_TRANSPORT The network HTTP Transport.
-     * @return An authorized Credential object.
-     * @throws IOException If the credentials.json file cannot be found.
-     */
-    private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
+    public static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
         // Load client secrets.
         InputStream in = SheetsQuickstart.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
         if (in == null) {
@@ -56,6 +67,62 @@ public class SheetsQuickstart {
         LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
+    /**
+     * Creates an authorized Credential object.
+     * @param HTTP_TRANSPORT The network HTTP Transport.
+     * @return An authorized Credential object.
+     * @throws IOException If the credentials.json file cannot be found.
+     */
+    private static Credential authorize() throws IOException, GeneralSecurityException {
+        // Load client secrets.
+        InputStream in = SheetsQuickstart.class.getResourceAsStream("/credentials.json");
+        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JacksonFactory.getDefaultInstance(), 
+            new InputStreamReader(in));
+
+        // Build flow and trigger user authorization request.
+        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+                GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY, clientSecrets, SCOPES)
+                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
+                .setAccessType("offline")
+                .build();
+
+        Credential credential = new AuthorizationCodeInstalledApp(
+            flow, new LocalServerReceiver())
+            .authorize("user");
+        return credential;
+    }
+
+    public static Sheets getSheetsServices() throws IOException, GeneralSecurityException {
+        Credential credential = authorize();
+        return new Sheets.Builder(GoogleNetHttpTransport.newTrustedTransport(),
+            JacksonFactory.getDefaultInstance(), credential)
+            .setApplicationName(APPLICATION_NAME)
+            .build();
+
+    }
+    /*public static void change(String name, int col_number, String newVal){
+        
+    }*/
+
+    public static List<Object> Search(List<List<Object>> everything,String name){
+        int index=0;
+        for(int i=0;i<everything.size();i++) {
+            for(int j=0;j<everything.get(0).size();j++) {
+                if(name.equals((String)everything.get(i).get(j))){
+                    index=i;
+                    break;
+                }
+            }
+        }
+        /*
+        List<Object> b = values.get(idex);
+        b.set(0,"rob");
+        values.set(19,b);
+        */
+        return(everything.get(index));
+  
+      }
+
 
     public static List<Object> search_name(String name, List<List<Object>> names) {
         List<Object> info = new ArrayList<Object>();
@@ -119,7 +186,8 @@ public class SheetsQuickstart {
             }
         
             
-        }   
+        }
+
         
         return(values);	
     }
@@ -128,11 +196,28 @@ public class SheetsQuickstart {
      * Prints the names and majors of students in a sample spreadsheet:
      * https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
      */
-    public static void main(String... args) throws IOException, GeneralSecurityException {
-        //getVals();
-        //search_name("Hope Keala", getVals());
-        System.out.println(search_name("Hope Keala", getVals()));
-        
-    }
+    public static void main(String[] args) throws IOException, GeneralSecurityException {
+		/*EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					display2 frame = new display2();
+					frame.setTitle("TROS");
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+        });*/
+        // The ID of the spreadsheet to update.
+       sheetsServices = getSheetsServices();
+        ValueRange body = new ValueRange()
+            .setValues(Arrays.asList(
+                Arrays.asList("updated")
+            ));
+        UpdateValuesResponse result = sheetsServices.spreadsheets().values()
+            .update(spreadsheetId,"A2", body)
+            .setValueInputOption("RAW")
+            .execute();
+	}
         
 } 

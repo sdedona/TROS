@@ -1,9 +1,14 @@
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.util.Vector;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+
+import org.graalvm.compiler.nodes.NodeView.Default;
+
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
@@ -42,14 +47,19 @@ public class rosterView extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
+
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(274, 83, 2, 2);
 		contentPane.add(scrollPane);
 		
-		table = new JTable();
-		table.setBounds(0, 0, 1, 1);
+		DefaultTableModel model = new DefaultTableModel(5, 0);
+		table = new JTable(model);
+		Vector<String> rowData = new Vector<String>();
+		rowData.add("1");
+		model.addRow(rowData);
+		//table.setBounds(0, 0, 1, 1);
 		contentPane.add(table);
+		
 		
 		}
 	}

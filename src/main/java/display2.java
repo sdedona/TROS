@@ -1,4 +1,5 @@
 import java.awt.BorderLayout;
+
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -13,7 +14,11 @@ import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.util.Vector;
 import java.awt.event.ActionEvent;
+import java.util.List;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 public class display2 extends JFrame {
 
@@ -22,24 +27,11 @@ public class display2 extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					display2 frame = new display2();
-					frame.setTitle("TROS");
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the frame.
 	 */
-	public display2() {
+	public display2() throws IOException, GeneralSecurityException{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1080, 720);
 		contentPane = new JPanel();
@@ -56,9 +48,30 @@ public class display2 extends JFrame {
 		  JFrame rosterDisp = new JFrame("Roster"); 
 		  rosterDisp.setLocationRelativeTo(null);
 		  rosterDisp.setSize(800, 500); 
-		  DefaultTableModel model = new DefaultTableModel(5,5); 
+		  DefaultTableModel model = new DefaultTableModel(0,5); 
 		  JTable tb = new JTable(model);
 		  tb.setShowGrid(true);
+		  //Vector<String> rowData = new Vector<String>();
+		  
+		  //Throw in the data
+		  List<List<Object>> all= SheetsQuickstart.getVals();
+		  model.setRowCount(all.size());
+		  model.setColumnCount(all.get(0).size());
+		  
+		  for(int i=1;i<all.size();i++) {
+			  for(int k = 0; k<all.get(0).size(); k++){
+					//rowData.add((String)all.get(i).get(0));
+					//rowData.add((String)all.get(i).get(1));
+					//rowData.add((String)all.get(i).get(2));
+					String value = (String)all.get(i).get(k);
+					System.out.println(value);
+					model.setValueAt(value, i, k);
+		  	}
+			
+		//model.addRow(new String[] {(String)all.get(i).get(0),(String)all.get(i).get(1),(String)all.get(i).get(2)}); 
+		  }
+		  
+		  
 		  JScrollPane scrollPane = new JScrollPane(tb);
 		  scrollPane.setBounds(getBounds());
 		  rosterDisp.getContentPane().add(scrollPane);
@@ -74,20 +87,28 @@ public class display2 extends JFrame {
 		 
 		
 		JButton btnAddMember = new JButton("Add Member");
+
 		btnAddMember.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 			
-				addMem open = new addMem();
-				open.setVisible(true);
+					addMem open = new addMem();
+					open.setVisible(true);
 			
-			}
+				}
 		});
 		btnAddMember.setBounds(349, 312, 131, 25);
 		contentPane.add(btnAddMember);
 
-		JButton btnNewButton = new JButton("Remove Member");
-		btnNewButton.setBounds(489, 312, 131, 25);
-		contentPane.add(btnNewButton);
+		JFrame JChange = new JFrame("Change");
+		JChange.setSize(800, 500);
+		JButton btnChange = new JButton("Change");
+		btnChange.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JChange.setVisible(true);
+			}
+		});
+		btnChange.setBounds(489, 312, 131, 25);
+		contentPane.add(btnChange);
 
 		JButton btnViewRoster = new JButton("View Roster");
 		btnViewRoster.addActionListener(new ActionListener() {
@@ -106,5 +127,6 @@ public class display2 extends JFrame {
 		JButton btnEditMember = new JButton("Edit Member");
 		btnEditMember.setBounds(225, 312, 112, 25);
 		contentPane.add(btnEditMember);
+		
 	}
 }
