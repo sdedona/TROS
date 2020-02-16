@@ -19,7 +19,7 @@ import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Arrays;
+import java.util.*;
 
 public class SheetsQuickstart {
     private static final String APPLICATION_NAME = "Google Sheets API Java Quickstart";
@@ -57,46 +57,82 @@ public class SheetsQuickstart {
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
+    public static List<Object> search_name(String name, List<List<Object>> names) {
+        List<Object> info = new ArrayList<Object>();
+        //System.out.println(names);
+        int index = 1;
+        //System.out.println(names.size());
+        boolean check = (String)names.get(11).get(0) == name;
+        System.out.println((String)names.get(11).get(0));
+        System.out.println(name);
+        System.out.println(check);
+        for (int i = 1; i<names.size(); i++){
+            if (((String)names.get(i).get(0)).equals(name)){
+               //System.out.println(i);
+               index = i;
+           }
+        }
+        for(int m=0;m<names.get(0).size();m++){
+            info.add(names.get(index).get(m));
+        }
+        
+        return info;
+    }
+
+    public static List<List<Object>> getVals() throws IOException, GeneralSecurityException{
+    	// Build a new authorized API client service.
+        final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+        final String spreadsheetId = "1JBX3AtbtB0oarMO-7UdZByhrxyfM_TC4ZxYEe-591gM";
+        final String range = "A1:E";
+        Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+                .setApplicationName(APPLICATION_NAME)
+                .build();
+        ValueRange response = service.spreadsheets().values()
+                .get(spreadsheetId, range)
+                .execute();
+        List<List<Object>> values = response.getValues();
+        if (values == null || values.isEmpty()) {
+            System.out.println("No data found.");
+        } else {
+            //System.out.println("Name, Major");
+            int i = 0;
+            for (List row : values) {
+                // Print columns A and E, which correspond to indices 0 and 4.
+                //System.out.printf("%s, %s\n", row.get(0), row.get(2));
+            	//System.out.println(i);
+            	//i++;
+            }
+            //System.out.println(values);
+            //System.out.println("rows "+(values.size()-1));
+            //System.out.println("col "+(values.get(0).size()-1));
+            //System.out.println("headers: "+values.get(0));
+            String [] headers= new String[values.get(0).size()];
+
+            for(i=0; i<values.get(0).size();i++) {
+            	headers[i]= (String)values.get(0).get(i);
+            }
+            for(i=0; i<values.get(0).size();i++) {
+            	//System.out.println(headers[i]);
+            }
+            for(i=0;i<values.size();i++) {
+                //System.out.println(values.get(i).get(0));
+            }
+        
+            
+        }   
+        
+        return(values);	
+    }
+
     /**
      * Prints the names and majors of students in a sample spreadsheet:
      * https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
      */
     public static void main(String... args) throws IOException, GeneralSecurityException {
-        // Build a new authorized API client service.
-        final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-        final String spreadsheetId = "1JBX3AtbtB0oarMO-7UdZByhrxyfM_TC4ZxYEe-591gM";
-        final String range_col = "A2:E";
-        final String range_row = "1:2";
-        Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
-                .setApplicationName(APPLICATION_NAME)
-                .build();
+        //getVals();
+        //search_name("Hope Keala", getVals());
+        System.out.println(search_name("Hope Keala", getVals()));
         
-        ValueRange response_col = service.spreadsheets().values()
-                .get(spreadsheetId, range_col)
-                .execute();
-        ValueRange response_row = service.spreadsheets().values()
-                .get(spreadsheetId, range_row)
-                .execute();
-        
-        List<List<Object>> values_col = response_col.getValues();
-        List<List<Object>> values_row = response_row.getValues();
-
-        if (values_col == null || values_col.isEmpty() && values_row == null || values_row.isEmpty()) {
-            System.out.println("No data found.");
-        } else {
-            System.out.println("Name, Major");
-            int k = 1;
-            for (List col : values_col) {
-                // Print columns A and E, which correspond to indices 0 and 4.
-                System.out.printf("%s, %s\n", col.get(0), col.get(2));
-                
-                //System.out.println(i);
-            	//i++;
-            }
-            for (List row : values_row) {
-                System.out.printf("%s, %s\n", row.get(0), row.get(1));
-            }
-             
-        }
     }
-}
+        
+} 
