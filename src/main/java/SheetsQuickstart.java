@@ -19,6 +19,7 @@ import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Arrays;
 
 public class SheetsQuickstart {
     private static final String APPLICATION_NAME = "Google Sheets API Java Quickstart";
@@ -64,25 +65,38 @@ public class SheetsQuickstart {
         // Build a new authorized API client service.
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         final String spreadsheetId = "1JBX3AtbtB0oarMO-7UdZByhrxyfM_TC4ZxYEe-591gM";
-        final String range = "A2:E";
+        final String range_col = "A2:E";
+        final String range_row = "1:2";
         Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME)
                 .build();
-        ValueRange response = service.spreadsheets().values()
-                .get(spreadsheetId, range)
+        
+        ValueRange response_col = service.spreadsheets().values()
+                .get(spreadsheetId, range_col)
                 .execute();
-        List<List<Object>> values = response.getValues();
-        if (values == null || values.isEmpty()) {
+        ValueRange response_row = service.spreadsheets().values()
+                .get(spreadsheetId, range_row)
+                .execute();
+        
+        List<List<Object>> values_col = response_col.getValues();
+        List<List<Object>> values_row = response_row.getValues();
+
+        if (values_col == null || values_col.isEmpty() && values_row == null || values_row.isEmpty()) {
             System.out.println("No data found.");
         } else {
             System.out.println("Name, Major");
-            int i = 0;
-            for (List row : values) {
+            int k = 1;
+            for (List col : values_col) {
                 // Print columns A and E, which correspond to indices 0 and 4.
-                System.out.printf("%s, %s\n", row.get(0), row.get(2));
-            	//System.out.println(i);
+                System.out.printf("%s, %s\n", col.get(0), col.get(2));
+                
+                //System.out.println(i);
             	//i++;
             }
+            for (List row : values_row) {
+                System.out.printf("%s, %s\n", row.get(0), row.get(1));
+            }
+             
         }
     }
 }
